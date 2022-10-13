@@ -1,4 +1,4 @@
-# Progressive training for code-switched sentiment analysis
+## Progressive training for code-switched sentiment analysis
 
 - [Model](#model)
 - [Training](#training)
@@ -7,7 +7,7 @@
 	- [Requirements](#requirements)
 - [Citation](#citation)
 
-## Model
+### Model
 
 Most of the experiments have been carried out using ```bert-base-multilingual-cased``` as the backbone model. 
 
@@ -54,6 +54,7 @@ argparse
 transformers==3.5.1
 nltk==3.5
 sklearn
+ai4bharat==0.5.0.3
 ```
 
 
