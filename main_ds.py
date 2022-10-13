@@ -50,8 +50,8 @@ def get_filtered_texts(fname, return_leaky_texts=False):
 def read_mined_texts(imbalancefix, datasetname):
 
     # filter out tweets that might be common 
-    all_fname = "./exdata/all_postprocessing.pkl"
-    mined_fname = "./exdata/mined_same_postprocessing.pkl"
+    all_fname = "./data/english_data/all_postprocessing.pkl"
+    mined_fname = "./data/english_data/mined_same_postprocessing.pkl"
     texts = get_filtered_texts(all_fname)
     leaky_texts    = get_filtered_texts(mined_fname, return_leaky_texts=True)
     filtered_texts = []
@@ -128,21 +128,21 @@ def get_parsed_args():
     parser.add_argument('--supervised', action='store_true')
     parser.add_argument('--zsl_ds_us_data_merged_multiple_m_half_data', action='store_true')
     parser.add_argument('--zsl_ds_us_data_merged_multiple_m_half_data_many_runs', action='store_true')
-    parser.add_argument("--zz_data", choices=["sail", "enes", "taen"],  default="sail")
+    parser.add_argument("--arg_data", choices=["sail", "enes", "taen"],  default="sail")
     args = parser.parse_args()
     return args
 
 args = get_parsed_args()
 print(args)
 
-ds_x, ds_y = read_mined_texts(args.external_data_imbalance_fix, args.zz_data)
-x, y = read_file("./" + args.zz_data, True, False)
+ds_x, ds_y = read_mined_texts(args.external_data_imbalance_fix, args.arg_data)
+x, y = read_file("./" + args.arg_data, True, False)
 
 set_seed(args.seed)
 
 ds_trainer =  DsTrainer((ds_x, ds_y), 
                         (x, y), 
-                        datasetname=args.zz_data,
+                        datasetname=args.arg_data,
                         seed=args.seed)
 ds_trainer.pretrain(n_epochs=5)
 if args.zsl_ds_us_data_merged_multiple_m_half_data_many_runs:

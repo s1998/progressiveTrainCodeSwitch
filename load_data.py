@@ -13,21 +13,10 @@ from base_code.utils import *
 def read_file(data_dir, with_evaluation, lbl_to_id_chng=True):
     data = []
     target = []
-    if data_dir in ["./agnews", "./yelp"]:
-        with open(join(data_dir, 'dataset.csv'), 'rt', encoding='utf-8') as csvfile:
-            csv.field_size_limit(500 * 1024 * 1024)
-            reader = csv.reader(csvfile)
-            for row in reader:
-                if data_dir == './agnews':
-                    doc = row[1] + '. ' + row[2]
-                    data.append(doc)
-                    target.append(int(row[0]) - 1)
-                elif data_dir == './yelp':
-                    data.append(row[1])
-                    target.append(int(row[0]) - 1)
-    elif data_dir in ["./sail", "./enes", "./enes2", "./taen", "./maen"]:
-        train_data = read_examples_from_file(data_dir, "train")
-        valid_data = read_examples_from_file(data_dir, "validation")
+    
+    if data_dir in ["sail", "enes", "taen", ]:
+        train_data = read_examples_from_file("./data" + data_dir, "train")
+        valid_data = read_examples_from_file("./data" + data_dir, "validation")
         labels = ["negative", "positive"]
         lbl_to_id = {lbl:i for i, lbl in enumerate(labels)}
         
