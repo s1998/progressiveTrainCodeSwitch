@@ -1,4 +1,4 @@
-## to run commands use: 
+### to run commands use: 
 
 CUDA_VISIBLE_DEVICES=12 python -u main_ds.py --external_data_imbalance_fix upsample  --seed 22 --zsl_ds_us_data_merged_multiple_m_half_data_many_runs --zz_data sail > logs2/sail_half_data_hrd_lbl_merged_bkts_ds_us_run22 &
 
