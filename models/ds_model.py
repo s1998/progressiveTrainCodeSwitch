@@ -88,7 +88,7 @@ class DsTrainer(object):
             pth = "./savedmodels/{}_{}".format(self.datasetname, self.seed)
         else:
             pth = "./savedmodels/{}_{}_{}".format(self.model_name, self.datasetname, self.seed)
-        print("randomtexthereforgreppurposesBBBBBBBB model pth {}".format(pth))
+        print("model pth {}".format(pth))
         import os
         if os.path.exists(pth):
             print("Loading from existing checkpint using pth : {}".format(pth))
@@ -149,8 +149,6 @@ class DsTrainer(object):
         x_tr, x_vl, y_tr, y_vl = train_test_split(x_tr, y_tr, 
             test_size=0.2, random_state=42)
 
-        # train dl, valid dl, test dl
-
         model = AutoModelForSequenceClassification.from_pretrained(self.model_name); 
         model.to(self.device)
 
@@ -164,9 +162,9 @@ class DsTrainer(object):
             self.device, n_epochs=4, load_best=True, eval_per_epoch=1, eval_train=False)
 
         y_te_pr = evaluate_fn(model, test__dl, 
-                        " randomtexthereforgreppurposesBBBBBBBB  model m test eval", self.device, return_lbls=True)
+                        "  model m test eval", self.device, return_lbls=True)
             
-        print("    randomtexthereforgreppurposesAAAAAAA    ")
+        print("       ")
         print("Trained model in supervised fashion to obtain a final test score of .....   {}".format(
             f1(np.array(y_te), np.array(y_te_pr), True)
         ))
@@ -211,7 +209,6 @@ class DsTrainer(object):
         import random
         PATH = "logs/tempmodel_{}_{}".format(random.randint(1, 100), float(time.time()))
         torch.save(self.model_m1.state_dict(), PATH)
-        # model_bl = AutoModelForSequenceClassification.from_pretrained(self.model_name); model_bl.load_state_dict(torch.load(PATH)); model_bl.to(self.device)
         ids, y_n_pseudo, _ = get_ids_ratio(self.us_eval_dl, y_n, self.model_m1, self.device)
         us_pseudo_train_ds = textDataset(self._preprocess_dataset([x_n[id_] for id_ in ids]+ self.ds_x_tr_txt), y_n_pseudo + self.ds_y_tr)
         self.us_pseudo_train_dl = DataLoader(us_pseudo_train_ds, shuffle=True, batch_size=64)
@@ -220,20 +217,19 @@ class DsTrainer(object):
         bkt_ids[0] = [id_ for id_ in ids if id_ < len(y_n) // 2]
         bkt_ids[1] = [id_ for id_ in ids if id_ > len(y_n) // 2]
 
-        print("randomtexthereforgreppurposesBBBBBBBB -- bktwise count selected : {} ".format({k:len(bkt_ids[k]) for k in bkt_ids}))
+        print("-- bktwise count selected : {} ".format({k:len(bkt_ids[k]) for k in bkt_ids}))
 
         del model_bl
         torch.cuda.empty_cache()
 
         final_y_pred = []
-        # self.model_m2 = AutoModelForSequenceClassification.from_pretrained(self.model_name); self.model_m2.load_state_dict(torch.load(PATH)); self.model_m2.to(self.device)
         bkt_y_pred_dict = {}
         prevx, prevy = [], []
         prevmodel = self.model_m1
-        print("randomtexthereforgreppurposesBBBBBBBB scrs bkt \n" + "\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
+        print("scrs bkt \n" + "\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
         for i in range(bkt_cnt):
             print("\n\n" + "*********" * 10)
-            print("\n\nrandomtexthereforgreppurposesBBBBBBBB Self training w/ bucket {} .... ".format(i))
+            print("\n\nSelf training w/ bucket {} .... ".format(i))
 
             # get predictions on the bkt i            
             y_pred = evaluate_fn(prevmodel, self.us_eval_dl, " ** ignore ** model 2 us eval bkt {}".format(i), self.device, return_lbls=True)
@@ -242,29 +238,21 @@ class DsTrainer(object):
             self.model_m2 = AutoModelForSequenceClassification.from_pretrained(self.model_name);  self.model_m2.to(self.device); self.model_m2.load_state_dict(torch.load(PATH))
             prevx.extend([x_n[id_] for id_ in bkt_ids[i]]); prevy.extend([y_pred[id_] for id_ in bkt_ids[i]])
             curr_trn_ds = textDataset(self._preprocess_dataset(prevx + self.ds_x_tr_txt), prevy + self.ds_y_tr)
-            print("randomtexthereforgreppurposesBBBBBBBB Bucket / total size : {} / {}".format(len(prevy), len(prevy + self.ds_y_tr)))
+            print("Bucket / total size : {} / {}".format(len(prevy), len(prevy + self.ds_y_tr)))
             self.us_pseudo_train_dl = DataLoader(curr_trn_ds, shuffle=True, batch_size=64)
             train_fn(self.model_m2, self.us_pseudo_train_dl, self.us_eval_dl, self.device, n_epochs=4, load_best=False, eval_per_epoch=1, eval_train=False)
-            y_n_pseudo = evaluate_fn(self.model_m2, self.us_eval_dl, " randomtexthereforgreppurposesBBBBBBBB  model m2 us eval bkt {}".format(i), self.device, return_lbls=True)
+            y_n_pseudo = evaluate_fn(self.model_m2, self.us_eval_dl, "  model m2 us eval bkt {}".format(i), self.device, return_lbls=True)
             scrs_bkt[i] = self._get_scrs(self.model_m2, bkts_vl, " model m2")
             print("Evaluating the entire eval dataset .... ")
             scrs.append(("st-bkt-{}".format(i), f1(np.array(y_n), np.array(y_n_pseudo), True)))
             prevmodel = self.model_m2
-            print("randomtexthereforgreppurposesBBBBBBBB scrs bkt \n" + "\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
+            print("scrs bkt \n" + "\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
 
-        print("randomtexthereforgreppurposesAAAAAAA")
         print("\n".join(str(scr) for scr in scrs))
-        print("randomtexthereforgreppurposesBBBBBBBB scrs bkt \n" + "\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
-        # print("\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
-        # print(scrs_bkt)
+        print("scrs bkt \n" + "\n".join(str(scr_bkt) +  "   " + str(scrs_bkt[scr_bkt]) for scr_bkt in scrs_bkt))
         print("Printing ood dictionary : {}".format(ood_res))
         print("\n\n\n\n")
         
-        with open("./logs2/dx/{}".format(self.datasetname), "w") as f:
-            for x_i, y_bkt_i, y_bl_i, y_i in zip(x_n, y_n_pseudo, y_n_pred_bl, y_n):
-                if y_bl_i != y_bkt_i:
-                    f.write("{} {} {} {} \n".format(y_i, y_bkt_i, y_bl_i, x_i))
-
         del self.model_m2
         torch.cuda.empty_cache()
         return (scrs, scrs_bkt)

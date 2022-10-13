@@ -47,7 +47,9 @@ def get_filtered_texts(fname, return_leaky_texts=False):
         return set(leaky_texts)
     return filtered_texts
 
-def read_mined_texts(imbalancefix, datasetname, ablation=False):
+def read_mined_texts(imbalancefix, datasetname):
+
+    # filter out tweets that might be common 
     all_fname = "./exdata/all_postprocessing.pkl"
     mined_fname = "./exdata/mined_same_postprocessing.pkl"
     texts = get_filtered_texts(all_fname)
@@ -114,22 +116,15 @@ def read_mined_texts(imbalancefix, datasetname, ablation=False):
     print("Filtered class wise statistics : ")
     print(Counter(ds_y))
 
-    # print("\n\nSamples of ds_x and ds_y")
-    # print(ds_x[:10])
-    # print(ds_x[-10:])
-    # print(ds_y[:10])
-    # print(ds_y[-10:])
-    # return ds_x[:100], ds_y[:100]
     return ds_x, ds_y
 
 def get_parsed_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ibfix", choices=["none", "upsample", "weightedloss"], 
+    parser.add_argument("--external_data_imbalance_fix", choices=["none", "upsample", "weightedloss"], 
                         help="how to fix imbalance in the dataset", default="none")
     parser.add_argument("--seed", default=1,  help="choose the seed")
     parser.add_argument("--seed_new", default=1,  help="choose the seed")
     parser.add_argument("--bkts", default=4,  help="choose the seed")
-    parser.add_argument('--ablation', action='store_true')
     parser.add_argument('--supervised', action='store_true')
     parser.add_argument('--zsl_ds_us_data_merged_multiple_m_half_data', action='store_true')
     parser.add_argument('--zsl_ds_us_data_merged_multiple_m_half_data_many_runs', action='store_true')
@@ -140,7 +135,7 @@ def get_parsed_args():
 args = get_parsed_args()
 print(args)
 
-ds_x, ds_y = read_mined_texts(args.ibfix, args.zz_data, ablation=args.ablation)
+ds_x, ds_y = read_mined_texts(args.external_data_imbalance_fix, args.zz_data)
 x, y = read_file("./" + args.zz_data, True, False)
 
 set_seed(args.seed)
