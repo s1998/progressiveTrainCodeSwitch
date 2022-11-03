@@ -1,5 +1,7 @@
 ## Progressive training for code-switched sentiment analysis
 
+Code for the  paper. 
+
 - [Model](#model)
 - [Training](#training)
 	- [Required Inputs](#required-inputs)
