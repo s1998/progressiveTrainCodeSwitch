@@ -1,4 +1,4 @@
-## Progressive training for code-switched sentiment analysis
+## Progressive training for Code-Switched Text Data
 
 
 - [Model](#model)
