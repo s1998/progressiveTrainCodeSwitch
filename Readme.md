@@ -63,19 +63,12 @@ ai4bharat==0.5.0.3
 ```
 @misc{https://doi.org/10.48550/arxiv.2210.14380,
   doi = {10.48550/ARXIV.2210.14380},
-  
   url = {https://arxiv.org/abs/2210.14380},
-  
   author = {Ranjan, Sudhanshu and Mekala, Dheeraj and Shang, Jingbo},
-  
   keywords = {Computation and Language (cs.CL), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  
   title = {Progressive Sentiment Analysis for Code-Switched Text Data},
-  
-  publisher = {arXiv},
-  
+  publisher = {arXiv},  
   year = {2022},
-  
   copyright = {arXiv.org perpetual, non-exclusive license}
 }
 ```
